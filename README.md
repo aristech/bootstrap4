@@ -6,7 +6,7 @@ You can check it out here:
 <code>https://coursetro.com/posts/code/130/Learn-Bootstrap-4-Final-in-2018-with-our-Free-Crash-Course</code>
 
 It will create an working directory in Documents folder.
-you can change directory by editing the bash file.
+you can change directory by editing the bash file.<br/>
 Nodejs and Gulp (Global install) is required for this to work
 
 How to:<br/>
