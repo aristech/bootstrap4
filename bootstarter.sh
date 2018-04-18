@@ -5,15 +5,17 @@ echo "Hello, what's the name of the bootstrap workplace you want to create?"
 read ans
 sleep 2
 echo "Please wait while i create $ans in the Documents folder"
+sleep 2
 cd ..
 mkdir $HOME/Documents/$ans && cd $HOME/Documents/$ans
 npm init -y
-npm i gulp browser-sync gulp-sass --save-dev
+npm i gulp browser-sync gulp-sass gulp-uglify --save-dev
 npm i bootstrap jquery popper.js --save
 mkdir $HOME/Documents/$ans/src
 mkdir $HOME/Documents/$ans/src/assets
 mkdir $HOME/Documents/$ans/src/css
 mkdir $HOME/Documents/$ans/src/js
+mkdir $HOME/Documents/$ans/src/customjs
 mkdir $HOME/Documents/$ans/src/scss
 cat > $HOME/Documents/$ans/src/index.html << EOL
 <!DOCTYPE html>
@@ -140,6 +142,7 @@ cat > $HOME/Documents/$ans/src/index.html << EOL
         <script src="/js/jquery.min.js"></script>
         <script src="/js/popper.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/custom.js"></script>
     </body>
 </html>
 EOL
@@ -147,6 +150,15 @@ cat > $HOME/Documents/$ans/gulpfile.js << EOL
 var gulp        = require('gulp');
 var browserSync = require('browser-sync').create();
 var sass        = require('gulp-sass');
+var uglify 		= require("gulp-uglify");
+
+
+// watch custom js files
+gulp.task('minify-js', function () {
+	return gulp.src('src/customjs/*.js')
+		.pipe(uglify())
+		.pipe(gulp.dest("src/js"));
+});
 
 // Compile sass into CSS & auto-inject into browsers
 gulp.task('sass', function() {
@@ -156,6 +168,7 @@ gulp.task('sass', function() {
         .pipe(browserSync.stream());
 });
 
+
 // Move the javascript files into our /src/js folder
 gulp.task('js', function() {
     return gulp.src(['node_modules/bootstrap/dist/js/bootstrap.min.js', 'node_modules/jquery/dist/jquery.min.js', 'node_modules/popper.js/dist/umd/popper.min.js'])
@@ -164,17 +177,25 @@ gulp.task('js', function() {
 });
 
 // Static Server + watching scss/html files
-gulp.task('serve', ['sass'], function() {
+gulp.task('serve', ['sass', 'minify-js'], function() {
 
     browserSync.init({
         server: "./src"  
     });
 
-    gulp.watch(['node_modules/bootstrap/scss/bootstrap.scss', 'src/scss/*.scss'], ['sass']);
+    gulp.watch(['node_modules/bootstrap/scss/bootstrap.scss', 'src/scss/*.scss'], ['sass'],['minify-js']);
     gulp.watch("src/*.html").on('change', browserSync.reload);
+	gulp.watch("src/js/*.js").on('change', browserSync.reload);
 });
 
 gulp.task('default', ['js','serve']);
+EOL
+cat > $HOME/Documents/$ans/src/customjs/custom.js << EOL
+//write your custom js scripts here and they will be minified in the /js folder
+EOL
+cat > $HOME/Documents/$ans/src/js/custom.js << EOL
+//write your custom js scripts in the /src/customjs/custom.js file 
+and they will be minified in here automtically
 EOL
 cat > $HOME/Documents/$ans/src/scss/styles.scss << EOL
 // Variable Overrides 
