@@ -211,7 +211,19 @@ cat > $HOME/Documents/$ans/src/scss/styles.scss << EOL
 
 // Bootstrap Sass Imports!
 EOL
-echo "Ok, so far so good. Let's run this baby!"
-sleep 2
+cd $HOME/Documents/$ans
+clear
+echo "Ok, so far so good. Your new project should be inside your Documents folder."
+sleep 1
+echo "Let's run this baby on the browser in:"
+echo "5"
+sleep 1
+echo "4"
+sleep 1
+echo "3"
+sleep 1
+echo "2"
+sleep 1
+echo "1"
 gulp
 
