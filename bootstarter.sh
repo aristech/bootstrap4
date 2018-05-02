@@ -157,7 +157,8 @@ var uglify 		= require("gulp-uglify");
 gulp.task('minify-js', function () {
 	return gulp.src('src/customjs/*.js')
 		.pipe(uglify())
-		.pipe(gulp.dest("src/js"));
+        .pipe(gulp.dest("src/js"))
+        .pipe(browserSync.stream());
 });
 
 // Compile sass into CSS & auto-inject into browsers
@@ -171,24 +172,25 @@ gulp.task('sass', function() {
 
 // Move the javascript files into our /src/js folder
 gulp.task('js', function() {
-    return gulp.src(['node_modules/bootstrap/dist/js/bootstrap.min.js', 'node_modules/jquery/dist/jquery.min.js', 'node_modules/popper.js/dist/umd/popper.min.js'])
+    return gulp.src(['node_modules/bootstrap/dist/js/bootstrap.min.js', 'node_modules/jquery/dist/jquery.min.js', 'node_modules/popper.js/dist/umd/popper.min.js','customjs/*.js'])
         .pipe(gulp.dest("src/js"))
         .pipe(browserSync.stream());
 });
 
-// Static Server + watching scss/html files
+// Static Server + watching js/scss/html files
 gulp.task('serve', ['sass', 'minify-js'], function() {
 
     browserSync.init({
         server: "./src"  
     });
 
-    gulp.watch(['node_modules/bootstrap/scss/bootstrap.scss', 'src/scss/*.scss'], ['sass'],['minify-js']);
+    gulp.watch(['node_modules/bootstrap/scss/bootstrap.scss', 'src/scss/*.scss'], ['sass']);
+    gulp.watch(['src/customjs/*.js'],['minify-js']);
     gulp.watch("src/*.html").on('change', browserSync.reload);
 	gulp.watch("src/js/*.js").on('change', browserSync.reload);
 });
 
-gulp.task('default', ['js','serve']);
+gulp.task('default', ['serve']);
 EOL
 cat > $HOME/Documents/$ans/src/customjs/custom.js << EOL
 //write your custom js scripts here and they will be minified in the /js folder
